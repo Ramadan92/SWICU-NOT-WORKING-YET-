@@ -32,14 +32,11 @@ int main(void)
 	Led_Init(LED_2);
 	Led_Init(LED_3);
 	
-	/*initializing the gpio pin of the trigger as an input*/
-	gpioPinDirection(GPIOB,BIT1,INPUT);
-	
 	/*enabling global interrupt*/
 	ENABLE_GINT;
 	
-	/*initializing software ICU module*/
-	SwICU_Init(SwICU_EdgeRisiging);
+	/*initializing the ultrasonic sensor*/
+	USSensor_init();
 	
 	while (1)
 	{
@@ -52,7 +49,7 @@ int main(void)
 		/*calculating the distance according to the value of TCNT0*/
 		u8_distance = USSensor_getDistance(u8_Ticks);
 		
-		/*mapping the distance on the 4 leds*/
+		/*mapping the distance on the 4 LEDs*/
 		PORTB_DATA &= 0x0F;
 		PORTB_DATA |= (u8_distance<<4);
 	}

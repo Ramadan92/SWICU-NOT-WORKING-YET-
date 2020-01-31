@@ -25,7 +25,7 @@ void EXTI_Init(uint8_t u8_INTNo , uint8_t u8_sense)
 		{
 			switch(u8_sense)
 			{
-				case INT0_FALLING_EDGE:
+				case INT0_LOW_LEVEL:
 				MCUCR &= !(INT0_RISING_EDGE);
 				break;
 				
@@ -40,7 +40,7 @@ void EXTI_Init(uint8_t u8_INTNo , uint8_t u8_sense)
 		{
 			switch(u8_sense)
 			{
-				case INT1_FALLING_EDGE:
+				case INT1_LOW_LEVEL:
 				MCUCR &= !(INT1_RISING_EDGE);
 				break;
 				
@@ -76,7 +76,7 @@ void EXTI_DEInit(void)
 
 InterruptServiceRoutine(INT0_vect)
 {
-	switch (flag)
+	/*switch (flag)
 	{
 		case 0:
 		timer0Start();
@@ -89,7 +89,7 @@ InterruptServiceRoutine(INT0_vect)
 		SwICU_SetCfgEdge(SwICU_EdgeRisiging);
 		flag=0;
 		break;
-	}
+	}*/
 }
 
 InterruptServiceRoutine(INT1_vect)
