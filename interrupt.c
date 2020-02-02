@@ -13,7 +13,7 @@
 #include "BITMATH.h"
 #include "softwareDelay.h"
 
-volatile static uint8_t flag=0;
+
 
 void EXTI_Init(uint8_t u8_INTNo , uint8_t u8_sense)
 {
@@ -23,6 +23,7 @@ void EXTI_Init(uint8_t u8_INTNo , uint8_t u8_sense)
 	{
 		case INT0:
 		{
+			gpioPinDirection(GPIOD,BIT2,INPUT);
 			switch(u8_sense)
 			{
 				case INT0_LOW_LEVEL:
@@ -38,6 +39,7 @@ void EXTI_Init(uint8_t u8_INTNo , uint8_t u8_sense)
 		
 		case INT1:
 		{
+			gpioPinDirection(GPIOD,BIT3,INPUT);
 			switch(u8_sense)
 			{
 				case INT1_LOW_LEVEL:
@@ -52,6 +54,7 @@ void EXTI_Init(uint8_t u8_INTNo , uint8_t u8_sense)
 		
 		case INT2:
 		{
+			gpioPinDirection(GPIOB,BIT2,INPUT);
 			switch(u8_sense)
 			{
 				case INT2_FALLING_EDGE:
@@ -76,20 +79,7 @@ void EXTI_DEInit(void)
 
 InterruptServiceRoutine(INT0_vect)
 {
-	/*switch (flag)
-	{
-		case 0:
-		timer0Start();
-		SwICU_SetCfgEdge(SwICU_EdgeFalling);
-		flag=1;
-		break;
-		
-		case 1:
-		timer0Stop();
-		SwICU_SetCfgEdge(SwICU_EdgeRisiging);
-		flag=0;
-		break;
-	}*/
+	
 }
 
 InterruptServiceRoutine(INT1_vect)
@@ -99,19 +89,38 @@ InterruptServiceRoutine(INT1_vect)
 
 InterruptServiceRoutine(INT2_vect)
 {	
-	switch (flag)
+	/*Flag to switch between falling and rising edges*/
+	volatile static uint8_t u8_ISRFlag=0;
+	
+	switch (u8_ISRFlag)
 	{
 		case 0:
+		
+		/*start the timer counter*/
 		timer0Start();
+		
+		/*update the value of the flag*/
+		u8_ISRFlag=1;
+		
+		/*re-configure the external interrupt's sense to be falling edge*/
 		SwICU_SetCfgEdge(SwICU_EdgeFalling);
-		flag=1;
 		break;
 		
 		case 1:
+		/*stop the timer counter*/
 		timer0Stop();
-		SwICU_SetCfgEdge(SwICU_EdgeRisiging);
-		flag=0;
+		
+		/*disable the interrupt*/
+		GICR &= ~(INT2);
+		
+		/*re-configure the external interrupt's sense to be rising edge*/
+		MCUCSR |= 0x40;
+		
+		/*update the value of the flag*/
+		u8_ISRFlag=0;
+		
 		break;
+	
 	}
 	
 }

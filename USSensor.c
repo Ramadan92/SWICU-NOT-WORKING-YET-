@@ -15,9 +15,10 @@ uint8_t USSensor_getDistance(uint8_t u8_ticks)
 	
 	uint32_t u32_pulseTime = (1024/16) * u8_ticks;
 	
-	uint8_t u8_distance = (2*u32_pulseTime)/117;
+	fint16_t f16_distance = u32_pulseTime/58;
 	
-	return u8_distance;
+	uint8_t u8_distance = f16_distance + 0.5;
+	return u8_distance  ;
 }
 
 void USSensor_Trigger(void)

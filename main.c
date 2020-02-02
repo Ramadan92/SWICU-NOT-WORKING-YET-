@@ -40,8 +40,10 @@ int main(void)
 	
 	while (1)
 	{
+		
 		/*sending the trigger signal*/
 		USSensor_Trigger();
+		
 		
 		/*reading the value in the TCNT0*/
 		SwICU_Read(&u8_Ticks);
@@ -52,6 +54,11 @@ int main(void)
 		/*mapping the distance on the 4 LEDs*/
 		PORTB_DATA &= 0x0F;
 		PORTB_DATA |= (u8_distance<<4);
+		
+		/*re-enable external interrupt after being disabled in the ISR*/
+		GICR |=INT2;
+		
+		
 	}
     return 0;
 }

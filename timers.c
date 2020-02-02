@@ -24,83 +24,7 @@ void timer0Init(En_timer0Mode_t en_mode,En_timer0OC_t en_OC0,En_timer0perscaler_
 {
 	en_gprescal0 = en_prescal;
 	
-	switch (en_mode)
-	{
-		case T0_NORMAL_MODE:
-		TCCR0 |= T0_NORMAL_MODE;
-		break;
-		
-		case T0_COMP_MODE:
-		TCCR0 |= T0_COMP_MODE;
-		break;
-	}
-	
-	switch (en_OC0)
-	{
-		case T0_OC0_TOGGLE:
-		TCCR0 |= T0_OC0_TOGGLE;
-		break;
-		
-		case T0_OC0_SET:
-		TCCR0 |= T0_OC0_SET;
-		break;
-		
-		case T0_OC0_CLEAR:
-		TCCR0 |= T0_OC0_CLEAR;
-		break;
-		
-		case T0_OC0_DIS:
-		TCCR0 |= T0_OC0_DIS;
-		
-	}
-	
-	/*switch (en_prescal)
-	{
-		case T0_NO_CLOCK:
-		TCCR0 |= T0_NO_CLOCK;
-		break;
-		
-		case T0_PRESCALER_NO:
-		TCCR0 |= T0_PRESCALER_NO;
-		break;
-		
-		case T0_PRESCALER_8:
-		TCCR0 |= T0_PRESCALER_8;
-		break;
-		
-		case T0_PRESCALER_64:
-		TCCR0 |= T0_PRESCALER_64;
-		break;
-		
-		case T0_PRESCALER_256:
-		TCCR0 |= T0_PRESCALER_256;
-		break;
-		
-		case T0_PRESCALER_1024:
-		TCCR0 |= T0_PRESCALER_1024;
-		break;
-		
-	}*/
-	
-	switch (en_interruptMask)
-	{
-		case T0_POLLING:
-		TIMSK |= T0_POLLING;
-		break;
-		
-		case T0_INTERRUPT_NORMAL:
-		TIMSK |= T0_INTERRUPT_NORMAL;
-		break;
-		
-		case T0_INTERRUPT_CMP:
-		TIMSK |= T0_INTERRUPT_CMP;
-		break;
-		
-		case T0_ALL_INTERRUPT:
-		TIMSK |= T0_ALL_INTERRUPT;
-		break;
-	}
-	
+	TCCR0|= (en_mode | en_OC0 | en_interruptMask);
 	TCNT0 = u8_initialValue;
 	OCR0  = u8_outputCompare;
 	
@@ -119,7 +43,7 @@ uint8_t timer0Read(void)
 void timer0Stop(void)
 {
 	T0_STOP;
-	en_gprescal0 = T0_NO_CLOCK;
+	//en_gprescal0 = T0_NO_CLOCK;
 }
 
 void timer0Start(void)

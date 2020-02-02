@@ -25,13 +25,17 @@ void SwICU_Init(EN_SwICU_Edge_t a_en_inputCaptureEdge)
 	switch(a_en_inputCaptureEdge)
 	{
 		case SwICU_EdgeFalling:
-		EXTI_Init(USSTrans_EXTI,INT2_FALLING_EDGE);
-		u8_gsense = INT2_FALLING_EDGE;
+		//EXTI_Init(USSTrans_EXTI,INT0_FALLING_EDGE);
+		GICR |= USSTrans_EXTI;
+		MCUCSR &= ~(0x40);
+		//u8_gsense = INT0_FALLING_EDGE;
 		break;
 		
 		case SwICU_EdgeRisiging:
-		EXTI_Init(USSTrans_EXTI,INT2_RISING_EDGE);
-		u8_gsense = INT2_RISING_EDGE;
+		//EXTI_Init(USSTrans_EXTI,INT0_RISING_EDGE);
+		GICR |= USSTrans_EXTI;
+		MCUCSR |= 0x40;
+		//u8_gsense = INT0_RISING_EDGE;
 		break;
 	}
 }
@@ -45,15 +49,18 @@ void SwICU_SetCfgEdge(EN_SwICU_Edge_t a_en_inputCaptureEdgeedge)
 	{
 		
 		case SwICU_EdgeFalling:
-		MCUCR &= !(INT2_RISING_EDGE);
-		u8_gsense = INT2_FALLING_EDGE;
+		GICR |= USSTrans_EXTI;
+		MCUCSR &= ~(0x40);
+		u8_gsense = INT0_FALLING_EDGE;
 		break;
 		
 		case SwICU_EdgeRisiging:
-		MCUCR |= INT2_RISING_EDGE;
-		u8_gsense = INT2_RISING_EDGE;
+		GICR |= USSTrans_EXTI;
+		MCUCSR |= 0x40;
+		u8_gsense = INT0_RISING_EDGE;
 		break;
 	}
+	//SET_BIT(GIFR,5);
 	//SET_BIT(GIFR,5);
 	//SET_BIT(GICR,5);
 	
@@ -62,11 +69,12 @@ void SwICU_SetCfgEdge(EN_SwICU_Edge_t a_en_inputCaptureEdgeedge)
 void SwICU_Read(volatile uint8_t* a_pu8_capt)
 {
 	
-	while (u8_gsense!=INT2_FALLING_EDGE);
-	while (u8_gsense!=INT2_RISING_EDGE);
+	while (GET_BIT(GICR,5));
+	//while (u8_gsense!=INT0_RISING_EDGE);
 	*a_pu8_capt = TCNT0;
 	TCNT0=0;
-	//EXTI_Init(INT2,INT2_RISING_EDGE);
+	
+	
 }
 
 void SwICU_Stop(void)
